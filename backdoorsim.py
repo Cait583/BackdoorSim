@@ -139,7 +139,7 @@ def investigation_shell():  # Creates another new function to begin simulating t
                 print_slow("⚠️ Behavior detected: Opens reverse shell to 45.33.32.156")
                 print_slow("⚠️ Modifies registry and disables antivirus.")
             else:
-                print_warning(f"{filename} is not a recognized suspicious file.") # Gives the user a warning if the file is not recongnized
+                print_warning(f"{filename} is not a recognized suspicious file.") # Gives the user a warning if the file is not recognized
             print("Please type your next command.")
             continue
 
@@ -194,4 +194,7 @@ def main():  # Main function to run the entire program
 
 
 if __name__ == "__main__":  # Only run this if this file is executed directly (not imported as a module)
-    main()
+    alert_thread = threading.Thread(target=simulate_alert)
+    alert_thread.start()
+    alert_thread.join()
+    investigation_shell()
