@@ -53,7 +53,7 @@ def investigation_shell():  # Creates another new function to begin simulating t
         "\n You are now in the secure analysis shell.")  # Informs the user that they are now in the secure analysis shell on a newline
     print_slow("Type a command to begin your investigation.")  # lets the user know they can now type a command
     print_warning(
-        "Available commands: netstat, whoami, ps, ls, exit (Please type one at a time)")  # Gives the user the available commands to use
+        "Available commands: netstat, whoami, ps, ls, cat, exit (Please type one at a time)")  # Gives the user the available commands to use
     print_warning(
         "Type 'help' at any time to see the list of available commands.")  # Gives the user information to get assistance on what commands are allowed if they forget
     print()  # Adds a blank line for readability
@@ -69,7 +69,7 @@ def investigation_shell():  # Creates another new function to begin simulating t
             "shell> ").strip().lower()  # This takes the users input and removes the extra spaces and puts it into lowercase
 
         if cmd == "help":  # Show the available commands to the user when they type 'help'
-            print("Available commands: netstat, whoami, ps, ls, exit, help, hint")
+            print("Available commands: netstat, whoami, ps, ls, exit, help, hint, trace, cat")
             print("Please type your next command.")
             continue
 
@@ -113,9 +113,50 @@ def investigation_shell():  # Creates another new function to begin simulating t
             continue
 
         elif cmd == "ls":  # If the user types ls this gives a listing of the files in the current directory
-            print("Documents  Downloads  secret_notes.txt  malware_sample.exe  script.py\n")
+            print("Documents  Downloads  secret_notes.txt  malware_sample.exe  script.py  auth.log\n")
             user_choice.append((scenario_stage, cmd))
             scenario_stage = 4  # Progress the scenario stage after ls
+            print("Please type your next command.")
+            continue
+
+        elif cmd.startswith("cat "): # If the user tries to read the file using the cat command
+            filename = cmd.split(" ", 1)[1] # This splits what the user is saying into two parts at the first space, and it will save the second part as a filename for the user
+            if filename == "auth.log": # Starts an if loop if the file name matches 'auth.log'
+                print_slow("[auth.log]")
+                print_slow("Jun 22 16:30:45 sshd[101]: Accepted password for user382 from 185.220.101.1 port 40212 ssh2")
+                print_slow("Jun 22 16:31:10 sshd[101]: Received disconnect from 185.220.101.1 port 40212:11: Bye Bye")
+                print_slow("Jun 22 16:31:12 sshd[101]: Disconnected from 185.220.101.1 port 40212")
+            else:
+                print_warning(f"Cannot open {filename}: Permission denied or file not found.") # Gives the user a warning if it does not match that filename
+            print("Please type your next command.")
+            continue
+
+        elif cmd.startswith("analyze "): # If the user types 'analyze malware_sample.exe'
+            filename = cmd.split(" ", 1)[1]
+            if filename == "malware_sample.exe": # Checks that the filename is that name and sends messages to the user:
+                print_slow("Analyzing malware_sample.exe...")
+                time.sleep(2)
+                print_slow("⚠️ Behavior detected: Opens reverse shell to 45.33.32.156")
+                print_slow("⚠️ Modifies registry and disables antivirus.")
+            else:
+                print_warning(f"{filename} is not a recognized suspicious file.") # Gives the user a warning if the file is not recongnized
+            print("Please type your next command.")
+            continue
+
+        elif cmd.startswith("trace "):  # Simulates tracing an IP address for the user
+            ip = cmd.split(" ", 1)[1]
+            print_slow(f"Tracing route to {ip}...") # Simulates the tracing route to the IP for the user
+            time.sleep(2)
+            hops = [ # Simulates hops for the user to show on the screen
+                "1   192.168.1.1",
+                "2   10.23.0.1",
+                "3   172.67.0.4",
+                f"4   {ip} [Destination reached]"
+            ]
+            for hop in hops: # Goes through each hop one by one for the user
+                print_slow(hop) # Prints each hop slowly to simulate real traceroute
+                time.sleep(1) # Waits 1 second between each hop
+            print_success("Trace complete.")
             print("Please type your next command.")
             continue
 
@@ -136,35 +177,21 @@ def get_hint(stage):  # Creates a new function that take one parameter 'stage'
         2: "Look at the running processes with 'ps' to identify unfamiliar programs.",
         3: "List files in the current directory using 'ls' to find suspicious files.",
         4: "Use 'whoami' to confirm the current user privileges.",
-        5: "Try 'exit' if you think the investigation is done or to quit the shell."
+        5: "Try 'exit' if you think the investigation is done or use 'cat auth.log' to see recent logs."
     }
-    return hints.get(stage,
-                     "No hints available for this step.")  # Returns the hint for the given stage if it exists if not it returns 'No hints available for this step'
+    return hints.get(stage, "No hints available for this stage.")
 
 
-def print_summary(user_choice):  # Creates a new function for showing the summary at the end for the user to look over
-    print("\n--- Investigation Summary ---")
-    stages_done = set(stage for stage, cmd in
-                      user_choice)  # Creates a set of unique investigation stages the user has done by taking away the stage from each (stage, cmd) pair in the user_choice list
-
-    if 1 in stages_done:
-        print_success("You checked network connections with 'netstat'. Good start.")
-    if 2 in stages_done:
-        print("You inspected running processes with 'ps'. Useful info found.")
-    if 3 in stages_done:
-        print("You listed directory files with 'ls'. Found suspicious files.")
-    if 4 in stages_done:
-        print("You confirmed user privileges with 'whoami'.")
-    if 5 in stages_done:
-        print("You ended the investigation properly with 'exit'.")
-
-    if not stages_done:  # Informs the user if they have not done the stages correctly
-        print("You didn't perform any investigation commands.")
-    print("--- End of Summary ---\n")
+def print_summary(choices):  # Creates a new function to print the summary of the investigation
+    print_success("\nInvestigation Summary:")
+    for stage, cmd in choices:  # Goes through each tuple in the choices list showing the stage and the command typed
+        print(f"Stage {stage}: Command used - {cmd}")
 
 
-if __name__ == "__main__":
-    alert_thread = threading.Thread(target=simulate_alert)
-    alert_thread.start()
-    alert_thread.join()  # Wait for the alert to finish before starting shell
-    investigation_shell()
+def main():  # Main function to run the entire program
+    simulate_alert()  # Starts the initial alert simulation
+    investigation_shell()  # Enters the investigation shell
+
+
+if __name__ == "__main__":  # Only run this if this file is executed directly (not imported as a module)
+    main()
