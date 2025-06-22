@@ -1,6 +1,7 @@
 import time  # This imports the time module to add delays into the program creating realistic typing effects and timed alerts
 import threading  # This threading helps run parts of the program one at a time to simulate background tasks running
 import random  # Generates random choices or numbers simulating the attacker moves or system responses
+import difflib  # This is used to find close matches for what the user types in their commands
 
 class Colors: # I am creating a toolbox named COLORS to hold special codes that tells your computer to change the color of the text in the terminal
   RED = '\033[91m' # Makes the text red using ANSI escape codes
@@ -58,38 +59,41 @@ def investigation_shell():  # Creates another new function to begin simulating t
         "Type 'help' at any time to see the list of available commands.")  # Gives the user information to get assistance on what commands are allowed if they forget
     print()  # Adds a blank line for readability
 
-    attacker_ip = random.choice(["185.220.101.1", "103.21.244.1",
-                                 "45.33.32.156"])  # This will pick a random IP address out of those listed to simulate that each time this is run the backdoor could be coming from a different source
+    attacker_ip = random.choice(["185.220.101.1", "103.21.244.1", "45.33.32.156"])  # This will pick a random IP address out of those listed to simulate that each time this is run the backdoor could be coming from a different source
     scenario_stage = 1  # Creates a variable called scenario_stage to 1 which tracks what phrase of investigation the user is currently in
     user_choice = []  # Creates an empty list so that each time the user enters a command it will be stored here along with the scenario stage
     hints_used = 0  # Creates a counter called hints_used to track each time the user types the command hint to get help with the situation
 
     while True:  # Starts the command loop
-        cmd = input(
-            "shell> ").strip().lower()  # This takes the users input and removes the extra spaces and puts it into lowercase
+        cmd = input("shell> ").strip().lower()  # This takes the users input and removes the extra spaces and puts it into lowercase
 
         if cmd == "help":  # Show the available commands to the user when they type 'help'
-            print("Available commands: netstat, whoami, ps, ls, exit, help, hint, trace, cat")
+            print("Available commands: netstat, whoami, ps, ls, exit, help, hint, trace, cat, analyze")
             print("Please type your next command.")
             continue
 
         elif cmd == "hint":  # Added hint command handling
             hints_used += 1  # This adds 1 to the number of hints the user has asked for
-            print(
-                f"HINT: {get_hint(scenario_stage)}")  # Gives a hint message to the user based on the current step in the investigation
+
+            next_stage = scenario_stage + 1 # This will calculate the next stage to give a hint for
+            hint = get_hint(next_stage) # This gets the hint for the next stage
+
+            if hint != "No hints available for this step.": # Starts a for loop with hint to only show if a hint exists
+              print_warning(f"Next hint: {hint}") # This shows the user the next steps hint
+            else:
+              print_warning("No further hints available for this step") # Tells the user that there are no more hints available
+              
             print("Please type your next command.")
             continue
 
         elif cmd == "netstat":  # Starts an if loop to check is the user has typed netstat as their first command
             print(
                 "[*] Active Connections:")  # Simulates the output of the netstat command for the user to show active network connections
-            print(
-                "Proto  Local Address          Foreign Address        State")  # Header line to show simulating the real netstat status
+            print("Proto  Local Address          Foreign Address        State")  # Header line to show simulating the real netstat status
             print("TCP    192.168.1.5:443        93.184.216.34:51515     ESTABLISHED")  # Fake TCP connection
             print("TCP    192.168.1.5:22         203.0.113.76:40212      TIME_WAIT")  # Another fake TCP connection
             print("UDP    0.0.0.0:68             *:*                    LISTENING\n")  # UDP listening
-            user_choice.append((scenario_stage,
-                                cmd))  # This logs each command the user types as well as the current investigation stage they are at
+            user_choice.append((scenario_stage, cmd))  # This logs each command the user types as well as the current investigation stage they are at
             scenario_stage = 2  # Progress the scenario stage after netstat
             print("Please type your next command.")
             continue
@@ -167,8 +171,12 @@ def investigation_shell():  # Creates another new function to begin simulating t
             break  # Exits the while loop to leave the shell
 
         else:
-            print_alert("Unknown command. Type 'help' to see available commands.")
-            print("Please type your next command.")
+          print("Unknown command.")
+          suggestion = difflib.get_close_matches(cmd, ["netstat", "whoami", "ps", "ls", "cat", "analyze", "hint", "help", "exit"], n=1) # ensures if the user is unsure of what to type next they get a suggestion
+          if suggestion:
+            print(f"Did you mean '{suggestion[0]}'?")
+          else:
+            print("Type 'help' to see the list of available commands.")
 
 
 def get_hint(stage):  # Creates a new function that take one parameter 'stage'
@@ -194,7 +202,4 @@ def main():  # Main function to run the entire program
 
 
 if __name__ == "__main__":  # Only run this if this file is executed directly (not imported as a module)
-    alert_thread = threading.Thread(target=simulate_alert)
-    alert_thread.start()
-    alert_thread.join()
-    investigation_shell()
+    main()
