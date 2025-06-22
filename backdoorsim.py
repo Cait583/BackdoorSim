@@ -1,4 +1,4 @@
-import time # This imports the time module to add delays into the program creating realistic typing effects and timed alets
+import time # This imports the time module to add delays into the program creating realistic typing effects and timed alerts
 import threading # This threading helps run parts of the program one at a time to simulate background tasks running
 import random # Generates random choices or numbers simulating the attacker moves or system responses
 
@@ -9,7 +9,7 @@ def print_slow(text, delay=0.03): # Creates a function print_slow to print the t
   print() # Moves the cursor to the next line after the message stops
 
 def simulate_alert(): # Creates a new function to start the simulated threat alert to warn the user of the attack
-  print_slow("🔴 ALERT: Unauthorized remote access attempt detected!") # Tells the user that their system has just detected a unauthorized remote access attempt
+  print_slow("🔴 ALERT: Unauthorized remote access attempt detected!") # Tells the user that their system has just detected unauthorized remote access attempt
   time.sleep(1) # This pauses the alert for 1 second for the user to have time to see it and think of their next steps
   print_slow("SYSTEM NOTICE: Potential backdoor behavior identified on this device.") # A second message appears to the user telling them another warning about the suspicious behavior
   time.sleep(1.5) # This adds another pause for the user
