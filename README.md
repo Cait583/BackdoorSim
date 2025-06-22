@@ -1,32 +1,48 @@
 # BackdoorSim
 
-My BackdoorSim is a purely educational tool built in Python that simulates a simple command-based backdoor.
+BackdoorSim is an educational cybersecurity simulation tool written in Python. It mimics a realistic scenario where a user investigates a suspicious backdoor infection via a command-line interface.
 
-This project does not perform any real malicious actions. All functionality is local and intended for simulation and learning only.
+This project is intended solely for learning and practice. No actual malicious actions are performed — all behaviors are simulated locally.
 
----
+What It Does:
 
-## What It Does:
+- Simulates a live system alert for an unauthorized remote access attempt
 
-- Simulates a basic command listener (simulated "reverse shell")
-- Accepts and executes simple local commands like:
-  - `whoami`
-  - `list_dir`
-  - `get_time`
-  - `exit`
-- Logs all interactions to a local file
-- Lets defenders (Blue Team) practice detecting or investigating backdoor behavior
+- Presents a secure analysis shell with a realistic command interface for investigation
 
----
-## ⚠️ LEGAL DISCLAIMER
+- Supports commands like:
 
-This tool is for **educational purposes only**. Do not use it on any system or network you do not own or have explicit permission to test. The creator is not responsible for any misuse of this code.
+- netstat (view active connections)
 
----
+- whoami (view current user)
 
-## How to Run:
+- ps (list running processes)
 
-1. Clone the repo
-2. Run the Python file:
-   ```bash
-   python backdoorsim.py
+- ls (list directory files)
+
+- cat (view contents of certain log files)
+
+- analyze (simulate malware analysis)
+
+- trace (simulate network traceroute)
+
+- hint (get help during investigation)
+
+- help (list available commands)
+
+- exit (exit shell and show summary)
+
+Simulates typing effects and colored terminal output for immersive experience
+
+Tracks investigation progress and provides tailored hints
+
+Summarizes user actions upon exiting the shell
+
+⚠️ Legal Disclaimer
+This tool is strictly for educational and training purposes. Do NOT use it on any systems or networks without explicit permission. The author is not responsible for misuse.
+
+How to Run
+Clone this repository
+
+Run the Python script:
+python backdoorsim.py
