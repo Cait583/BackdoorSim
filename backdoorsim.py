@@ -2,6 +2,21 @@ import time  # This imports the time module to add delays into the program creat
 import threading  # This threading helps run parts of the program one at a time to simulate background tasks running
 import random  # Generates random choices or numbers simulating the attacker moves or system responses
 
+class COLORS: # I am creating a toolbox named COLORS to hold special codes that tells your computer to change the color of the text in the terminal
+  RED = '\033[91m' # Makes the text red using ANSI escape codes
+  YELLOW = '\033[93m' # ANSI escape code for yellow text
+  GREEN = '\033[92m' # ANSI escape code for green text
+  END = '\033[0m' # This tells it to stop coloring and go back to the normal text color
+
+# All these newly created functions will take the message that will show to the user and add a special color to it. It will then print the message
+def print_alert(text):
+    print(Colors.RED + text + Colors.END)
+
+def print_warning(text):
+    print(Colors.YELLOW + text + Colors.END)
+
+def print_success(text):
+    print(Colors.GREEN + text + Colors.END)
 
 def print_slow(text,
                delay=0.03):  # Creates a function print_slow to print the text one character at a time with a delay of 0.03 seconds
@@ -12,7 +27,7 @@ def print_slow(text,
 
 
 def simulate_alert():  # Creates a new function to start the simulated threat alert to warn the user of the attack
-    print_slow(
+    print_alert(
         "🔴 ALERT: Unauthorized remote access attempt detected!")  # Tells the user that their system has just detected unauthorized remote access attempt
     time.sleep(
         1)  # This pauses the alert for 1 second for the user to have time to see it and think of their next steps
@@ -25,21 +40,21 @@ def simulate_alert():  # Creates a new function to start the simulated threat al
     print_slow("Timestamp: " + time.strftime(
         "%Y-%m-%d %H:%M:%S"))  # Prints another message to the user showing a timestamp of the current date and time from the system
     time.sleep(1.2)  # Another pause for this line
-    print_slow(
+    print_warning(
         "⚠️ ACTION REQUIRED: Investigate the potential threat immediately.")  # Informs the user they need to investigate immediately
     time.sleep(1)  # Pauses the line
-    print_slow(
+    print_success(
         "Launching secure analysis shell...")  # Sets up the next part for the user to interact with a fake CLI, this appears to the user before this
     time.sleep(2)  # Pauses the line again for 2 seconds to simulate the shell now loading
 
 
 def investigation_shell():  # Creates another new function to begin simulating the shell for investigating the threat
-    print_slow(
+    print_success(
         "\n You are now in the secure analysis shell.")  # Informs the user that they are now in the secure analysis shell on a newline
     print_slow("Type a command to begin your investigation.")  # lets the user know they can now type a command
-    print_slow(
+    print_warning(
         "Available commands: netstat, whoami, ps, ls, exit (Please type one at a time)")  # Gives the user the available commands to use
-    print_slow(
+    print_warning(
         "Type 'help' at any time to see the list of available commands.")  # Gives the user information to get assistance on what commands are allowed if they forget
     print()  # Adds a blank line for readability
 
@@ -111,7 +126,7 @@ def investigation_shell():  # Creates another new function to begin simulating t
             break  # Exits the while loop to leave the shell
 
         else:
-            print("Unknown command. Type 'help' to see available commands.")
+            print_alert("Unknown command. Type 'help' to see available commands.")
             print("Please type your next command.")
 
 
@@ -133,7 +148,7 @@ def print_summary(user_choice):  # Creates a new function for showing the summar
                       user_choice)  # Creates a set of unique investigation stages the user has done by taking away the stage from each (stage, cmd) pair in the user_choice list
 
     if 1 in stages_done:
-        print("You checked network connections with 'netstat'. Good start.")
+        print_success("You checked network connections with 'netstat'. Good start.")
     if 2 in stages_done:
         print("You inspected running processes with 'ps'. Useful info found.")
     if 3 in stages_done:
