@@ -2,7 +2,7 @@ import time  # This imports the time module to add delays into the program creat
 import threading  # This threading helps run parts of the program one at a time to simulate background tasks running
 import random  # Generates random choices or numbers simulating the attacker moves or system responses
 
-class COLORS: # I am creating a toolbox named COLORS to hold special codes that tells your computer to change the color of the text in the terminal
+class Colors: # I am creating a toolbox named COLORS to hold special codes that tells your computer to change the color of the text in the terminal
   RED = '\033[91m' # Makes the text red using ANSI escape codes
   YELLOW = '\033[93m' # ANSI escape code for yellow text
   GREEN = '\033[92m' # ANSI escape code for green text
